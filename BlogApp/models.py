@@ -46,6 +46,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     image=models.ImageField(upload_to='blog_media')
+    owner = models.ForeignKey(logintable, on_delete=models.CASCADE, related_name='blogs',null=True)
    
     
 

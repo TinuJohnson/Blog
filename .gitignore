@@ -1,0 +1,71 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+media/
+staticfiles/
+
+# If using PostgreSQL or MySQL, ignore respective dump files
+*.sql
+
+# Django migrations (optional to ignore)
+*/migrations/__pycache__/
+*/migrations/*.pyc
+# Uncomment the line below if you don't want to track migration files
+# */migrations/*.py
+
+# Virtual environment
+env/
+venv/
+ENV/
+.venv/
+
+# VSCode settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# dotenv environment files
+.env
+.env.*
+
+# Node-related (in case you have frontend assets)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage/test reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+.cache/
+pytest_cache/
+coverage.xml
+nosetests.xml
+test-results.xml
+junit.xml
+
+# MyPy / Pyright
+.mypy_cache/
+.dmypy.json
+.pyright/
+
+# Editor backups
+*~
+*.swp
+*.swo

@@ -10,7 +10,12 @@ urlpatterns = [
     path('profile/', views.user_profile, name='user_profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('blog/create/', views.blog, name='create'),
-    path('home/', views.listblog, name='home')
+    path('home/', views.listblog, name='home'),
+    path('my-blogs/', views.my_blogs, name='my-blogs'),
+    path('edit-blog/<int:blog_id>/', views.edit_blog, name='edit_blog'),
+    path('delete-blog/<int:blog_id>/', views.delete_blog, name='delete_blog'),
+
+
 
 ]
 

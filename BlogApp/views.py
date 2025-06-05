@@ -4,6 +4,7 @@ from django.contrib.auth.models import User,auth
 from django.contrib import messages
 from .models import Blog,Userprofile,logintable,Comment
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
  # Import your Register model
 
@@ -180,20 +181,30 @@ def logout(request):
 
 
 def blog(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        desc = request.POST.get('description')
+        img = request.FILES.get('image')
 
-    if request.method=='POST':
-        title=request.POST.get('title')
-        desc=request.POST.get('description')
-        img=request.FILES.get('image')
-        
+        # Get current logged-in user from session
+        username = request.session.get('username')
+        try:
+            user = logintable.objects.get(username=username)
+        except logintable.DoesNotExist:
+            messages.error(request, "User not found")
+            return redirect('login')
 
-        blog=Blog(title=title,description=desc,image=img)
+        blog = Blog(title=title, description=desc, image=img, owner=user)
         blog.save()
         return redirect('home')
 
-    return render(request,'create.html')
+    return render(request, 'create.html')
 
-
+def my_blogs(request):
+    username = request.session.get('username')
+    user = logintable.objects.get(username=username)
+    blogs = Blog.objects.filter(owner=user)
+    return render(request, 'my_blogs.html', {'blogs': blogs})
 
 def listblog(request):
 
@@ -260,13 +271,15 @@ def blog_list(request):
     return render(request, 'blog_list.html', {'blogs': blogs})
 
 def add_comment(request, blog_id):
-    blog = get_object_or_404(Blog, id=blog_id)
+    blog = get_object_or_404(Blog, izd=blog_id)
     if request.method == 'POST':
         text = request.POST.get('comment_text', '').strip()
         if text:
+            username = request.session['username']
+            user = logintable.objects.get(username=username)
             Comment.objects.create(
                 blog=blog,
-                user=request.user,
+                user=user,
                 text=text
             )
     return redirect('blog_detail', blog_id=blog.id)
@@ -277,9 +290,9 @@ def blog_detail(request, blog_id):
 
 
 
-def search(request):
-    Query=None
-    blogs=None
+# def search(request):
+#     Query=None
+#     blogs=None
 
     if 'Q' in request.GET:
 

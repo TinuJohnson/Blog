@@ -126,6 +126,7 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 # settings.py
  # This should match the name of your login URL pattern
+LOGIN_URL = '/login/'
 
 
 # Default primary key field type
