@@ -216,6 +216,8 @@ def listblog(request):
 from django.contrib.auth.decorators import login_required
 
 
+
+@login_required
 def user_profile(request):
     try:
         profile = Userprofile.objects.get(username=request.user.username)
@@ -227,7 +229,7 @@ def user_profile(request):
     return render(request, 'profile.html', {'profile': profile})
 
 
-
+@login_required
 def edit_profile(request):
     try:
         # Try to get the user's profile
@@ -271,15 +273,17 @@ def blog_list(request):
     return render(request, 'blog_list.html', {'blogs': blogs})
 
 def add_comment(request, blog_id):
-    blog = get_object_or_404(Blog, izd=blog_id)
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    blog = get_object_or_404(Blog, id=blog_id)
+
     if request.method == 'POST':
         text = request.POST.get('comment_text', '').strip()
         if text:
-            username = request.session['username']
-            user = logintable.objects.get(username=username)
             Comment.objects.create(
                 blog=blog,
-                user=user,
+                user=request.user,  # Using Django's auth system
                 text=text
             )
     return redirect('blog_detail', blog_id=blog.id)
@@ -289,20 +293,43 @@ def blog_detail(request, blog_id):
     return render(request, 'blog_detail.html', {'blog': blog})
 
 
+def edit_blog(request, blog_id):
+    if 'username' not in request.session:
+        return redirect('login')
 
+    blog = get_object_or_404(Blog, id=blog_id)
+    
+    if request.method == 'POST':
+        blog.title = request.POST.get('title')
+        blog.description = request.POST.get('description')
+        if 'image' in request.FILES:
+            blog.image = request.FILES['image']
+        blog.save()
+        return redirect('my-blogs')
+
+    return render(request, 'edit_blog.html', {'blog': blog})
+
+
+def delete_blog(request, blog_id):
+    if 'username' not in request.session:
+        return redirect('login')
+    blog = get_object_or_404(Blog, id=blog_id)
+    if request.method == 'POST':
+        blog.delete()
+        return redirect('my-blogs')
 # def search(request):
 #     Query=None
 #     blogs=None
 
-    if 'Q' in request.GET:
+#     if 'Q' in request.GET:
 
-        Query=request.GET.get('Q')
-        blogs=Blog.objects.filter(Q(title__icontains=Query))
+#         Query=request.GET.get('Q')
+#         blogs=Blog.objects.filter(Q(title__icontains=Query))
 
-    else:
-        blogs=[]
+#     else:
+#         blogs=[]
 
 
-    context={'blogs':blogs,'Query':Query}
+#     context={'blogs':blogs,'Query':Query}
 
-    return render(request,'search.html',context)
+#     return render(request,'search.html',context)

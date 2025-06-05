@@ -97,6 +97,7 @@
 
             <!-- Main Content -->
             <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4 py-4">
+                        
                 <!-- Navbar -->
                 <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4">
                     <div class="container-fluid">
@@ -128,7 +129,8 @@
                 </nav>
 
 
-                {% block content %}
+            {% block content %}
+                
                 {% endblock %}
 
                 <!-- Page Heading -->
@@ -136,6 +138,7 @@
 
                 <!-- Blog List -->
                 <div class="row">
+                    
                     {% for blog in blogs %}
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="blog-card card h-100">
