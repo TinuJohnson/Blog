@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="form-container bg-white">
+            <h2 class="text-center mb-4">Register Account</h2>
+            
+            <!-- Messages -->
+            {% if messages %}
+            <div class="alert alert-info">
+                <ul class="messages mb-0">
+                    {% for msg in messages %}
+                    <li{% if msg.tags %} class="{{ msg.tags }}"{% endif %}>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="row g-3">
+                    <!-- Username -->
+                    <div class="col-md-12">
+                        <label for="username" class="form-label">Username*</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                    </div>
+                    
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                        <label for="firstname" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name">
+                    </div>
+                    
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                        <label for="lastname" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name">
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="col-12">
+                        <label for="email" class="form-label">Email*</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                    </div>
+                    
+                    <!-- Contact Number -->
+                    <div class="col-12">
+                        <label for="contactnumber" class="form-label">Contact Number</label>
+                        <input type="number" class="form-control" id="contactnumber" name="Contact" placeholder="Enter contact number">
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">Password*</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+                    
+                    <!-- Confirm Password -->
+                    <div class="col-md-6">
+                        <label for="password1" class="form-label">Confirm Password*</label>
+                        <input type="password" class="form-control" id="password1" name="password1" placeholder="Confirm password" required>
+                    </div>
+                    
+                    <!-- Profile Picture -->
+                    <div class="col-12">
+                        <label for="profilepic" class="form-label">Profile Picture</label>
+                        <input type="file" class="form-control" id="profilepic" name="profilepic" accept="image/*">
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary w-100 py-2">Register</button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="text-center mt-3">
+                <p>Already have an account? <a href="{% url 'login'  %}" class="btn btn-primary">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

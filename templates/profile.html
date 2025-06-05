@@ -1,0 +1,71 @@
+
+ {% extends "home.html" %}
+ {% block content %}
+
+
+
+
+    <div class="container">
+        <div class="profile-container card p-4 mb-4 bg-white">
+            <div class="card-body">
+                <h2 class="card-title mb-4 pb-2 border-bottom">User Profile</h2>
+                
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        <div class="d-flex justify-content-center">
+                            {% if profile.image %}
+                                <img src="{{ profile.image.url }}" alt="Profile Image" class="profile-img rounded-circle">
+                            {% else %}
+                                <div class="no-image rounded-circle">
+                                    <span class="text-muted">No image</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <strong class="text-muted">Username:</strong>
+                            </div>
+                            <div class="col-sm-9">
+                                {{ profile.username }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <strong class="text-muted">Name:</strong>
+                            </div>
+                            <div class="col-sm-9">
+                                {{ profile.firstname }} {{ profile.lastname }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <strong class="text-muted">Email:</strong>
+                            </div>
+                            <div class="col-sm-9">
+                                {{ profile.email }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <strong class="text-muted">Contact:</strong>
+                            </div>
+                            <div class="col-sm-9">
+                                {{ profile.contact|default:"Not provided" }}
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="{% url 'edit_profile' %}" class="btn btn-primary px-4">
+                                <i class="bi bi-pencil-square"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ {% endblock %} 

@@ -1,0 +1,59 @@
+
+ {% extends "home.html" %}
+ {% block content %}
+
+    <div class="container">
+        <div class="blog-container p-4 p-md-5">
+            <h1 class="blog-header text-center mb-4">Create Blog</h1>
+
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="title" class="form-label fw-semibold">Blog Name</label>
+                    <input type="text" class="form-control form-control-lg" id="title" name="title" placeholder="Enter the blog title" required>
+                    <div class="form-note mt-1">Make it catchy and descriptive</div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="form-label fw-semibold">Description</label>
+                    <input type="text" class="form-control form-control-lg" id="description" name="description" placeholder="Enter the blog description" required>
+                    <div class="form-note mt-1">Summarize what your blog is about</div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="form-label fw-semibold">Featured Image</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    <div class="form-note mt-1">Upload a high-quality image for your blog (JPEG, PNG)</div>
+                    <img id="imagePreview" class="image-preview img-fluid" alt="Image preview">
+                </div>
+
+                <button type="submit" class="btn btn-publish btn-primary w-100 py-3">Publish Blog</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Image Preview Script -->
+    <script>
+        document.getElementById('image').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            const file = e.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
+{% endblock %}
