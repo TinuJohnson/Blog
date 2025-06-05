@@ -262,7 +262,7 @@ def blog_list(request):
     return render(request, 'blog_list.html', {'blogs': blogs})
 
 def add_comment(request, blog_id):
-    blog = get_object_or_404(Blog, id=blog_id)
+    blog = get_object_or_404(Blog, izd=blog_id)
     if request.method == 'POST':
         text = request.POST.get('comment_text', '').strip()
         if text:
@@ -279,19 +279,19 @@ def blog_detail(request, blog_id):
 
 
 
-def search(request):
-    Query=None
-    blogs=None
+# def search(request):
+#     Query=None
+#     blogs=None
 
-    if 'Q' in request.GET:
+#     if 'Q' in request.GET:
 
-        Query=request.GET.get('Q')
-        blogs=Blog.objects.filter(Q(title__icontains=Query))
+#         Query=request.GET.get('Q')
+#         blogs=Blog.objects.filter(Q(title__icontains=Query))
 
-    else:
-        blogs=[]
+#     else:
+#         blogs=[]
 
 
-    context={'blogs':blogs,'Query':Query}
+#     context={'blogs':blogs,'Query':Query}
 
-    return render(request,'search.html',context)
+#     return render(request,'search.html',context)
