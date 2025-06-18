@@ -1,34 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSearch"><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navbarSearch">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Blogs</h2>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <a href="{% url 'create' %}" class="btn btn-primary">Create New</a>
-        </div>
-        <form class="d-flex ms-auto">
-          <div class="input-group">
-            <form class="search-form d-flex align-items-center" method="get" action="#">
-              <input type="text" name="Q" class="form-control" placeholder="Search blogs..." />
-              <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-          </div>
-        </form>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Blog List -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSearch">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSearch">
+     
+      <div class="d-flex align-items-center me-3">
+        <h2 class="mb-3">Blogs</h2>  
+      </div>
+      
+      
+      <div class="d-flex align-items-center me-auto"> 
+        <a href="{% url 'create' %}" class="btn btn-primary">Create New</a>
+      </div>
+   
+      <form class="d-flex align-items-center" method="get" action="{% url 'search' %}">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search blogs..." />
+          <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
   <div class="row">
-    {% for blog in blogs %}
-      <div class="col-md-6 col-lg-4 mb-4">
+    {% for blog in page %}
+      <div class="col-md-6 col-lg-3 mb-3">
         <div class="blog-card card h-100">
-          <!-- Blog Image -->
+         
           {% if blog.image %}
             <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.title }}" style="height: 200px; object-fit: cover;" />
           {% else %}
@@ -50,10 +56,10 @@
               {% if blog.comment_set.all %}
                 {# Default for ForeignKey relation #}
                 {% for comment in blog.comment_set.all %}
-                  <div class="comment mb-3 p-3 border rounded">
-                    <div class="d-flex justify-content-between mb-2">
+                  <div class="comment mb-0 p-2 border rounded">
+                    <div class="d-flex justify-content-between mb-20">
                       <strong class="comment-author">{{ comment.user.username|default:'Anonymous' }}</strong>
-                      <small class="text-muted comment-time">{{ comment.created_at|timesince }} ago</small>
+                     <small class="text-muted comment-time"></small> 
                     </div>
                     <p class="mb-0">{{ comment.text|linebreaks }}</p>
                   </div>
@@ -76,4 +82,34 @@
       </div>
     {% endfor %}
   </div>
+
+
+
+  <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    {% if page.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{page.previous_page_number}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for num in page.paginator.page_range %}
+    <li class="page-item" {% if page.number == num %}activate{% endif %}>
+      <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+    </li>
+    
+
+      {% endfor %}
+      {% if page.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{page.next_page_number}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+
+
 {% endblock %}

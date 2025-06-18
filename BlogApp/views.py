@@ -4,7 +4,7 @@ from django.contrib.auth.models import User,auth
 from django.contrib import messages
 from .models import Blog,Usertable,Comment,logintable
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage
 
  
 def useRegistration(request):
@@ -125,8 +125,18 @@ def my_blogs(request):
 def listblog(request):
 
     blogs=Blog.objects.all()
+    
+    paginator=Paginator(blogs,4)
+    page_number=request.GET.get('page')
+    
+    try:
+        page=paginator.get_page(page_number)
+        
+    except EmptyPage:
+        page=paginator.page(page_number.num_pages)
+        
 
-    return render(request,'home.html',{'blogs':blogs})
+    return render(request,'home.html',{'blogs':blogs,'page':page})
 
 
 
@@ -252,19 +262,21 @@ def delete_blog(request, blog_id):
     if request.method == 'POST':
         blog.delete()
         return redirect('my-blogs')
-# def search(request):
-#     Query=None
-#     blogs=None
+    
+    
+def search(request):
+    Query=None
+    blogs=None
 
-#     if 'Q' in request.GET:
+    if 'q' in request.GET:
 
-#         Query=request.GET.get('Q')
-#         blogs=Blog.objects.filter(Q(title__icontains=Query))
+        Query=request.GET.get('q')
+        blogs=Blog.objects.filter(Q(title__icontains=Query))
 
-#     else:
-#         blogs=[]
+    else:
+        blogs=[]
 
 
-#     context={'blogs':blogs,'Query':Query}
+    context={'blogs':blogs,'Query':Query}
 
-#     return render(request,'search.html',context)
+    return render(request,'search.html',context)
