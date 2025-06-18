@@ -15,7 +15,7 @@ def useRegistration(request):
         password = request.POST['password']
         password1 = request.POST['password1']
         
-        # Check if passwords match
+      
         if password != password1:
             messages.error(request, 'Passwords do not match')
             return redirect('register')
@@ -25,13 +25,13 @@ def useRegistration(request):
         # Create user
         userprofile = Usertable(
             username=request.POST['username'],
-            password=request.POST['password'],  # Hash the password
-            role=request.user_role, # Changed from 'role' to 'type'
+            password=request.POST['password'],  
+            role=request.user_role,
             firstname=request.POST.get('firstname'),
             lastname=request.POST.get('lastname'),
             email=request.POST['email'],
             contact=request.POST.get('contact'),
-            image=request.FILES.get('profilepic')  # Changed from 'image' to 'profilepic'
+            image=request.FILES.get('profilepic') 
         )
 
         loginprofile = logintable(
@@ -56,13 +56,12 @@ def login1(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        role = 'user'  # Default role
-
+        role = 'user' 
         try:
             user_details = logintable.objects.get(username=username)
             
-            # Check if password matches
-            if user_details.password == password:  # In production, use check_password()
+            
+            if user_details.password == password:  
                 request.session['username'] = user_details.username
                 
                 if role == 'user':
@@ -80,6 +79,71 @@ def login1(request):
     return render(request, 'login.html')
 
 
+def forgot_password(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        
+        try:
+            user = Usertable.objects.get(username=username)
+            request.session['reset_user_id'] = user.id
+            return redirect('set_new_password')
+        except Usertable.DoesNotExist:
+            messages.error(request, 'Username does not exist')
+            return redirect('forgot_password')
+    
+    return render(request, 'forgot_password.html')
+
+def set_new_password(request):
+    if 'reset_user_id' not in request.session:
+        return redirect('login')
+    
+    user_id = request.session['reset_user_id']
+    
+    try:
+        user = Usertable.objects.get(id=user_id)
+    except Usertable.DoesNotExist:
+        messages.error(request, 'User not found')
+        return redirect('login')
+    
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if new_password != confirm_password:
+            messages.error(request, "Passwords don't match")
+            return redirect('set_new_password')
+        
+        try:
+         
+            hashed_password = make_password(new_password)
+            
+         
+            user.password = hashed_password
+            user.save()
+            
+           
+            try:
+                login_record = logintable.objects.get(username=user.username)
+                login_record.password = new_password
+                login_record.save()
+            except logintable.DoesNotExist:
+             
+                logintable.objects.create(
+                    username=user.username,
+                    password=hashed_password
+                )
+           
+            del request.session['reset_user_id']
+            
+            messages.success(request, 'Password updated successfully!')
+            return redirect('login')
+        
+        except ValidationError as e:
+            messages.error(request, '\n'.join(e.messages))
+    
+    return render(request, 'set_new_password.html')
+
+
 def logout(request):
     auth.logout(request)
     return redirect('login')
@@ -91,7 +155,6 @@ def blog(request):
         desc = request.POST.get('description')
         img = request.FILES.get('image')
 
-        # Get current logged-in user from session
         username = request.session.get('username')
         try:
             user = logintable.objects.get(username=username)
@@ -106,17 +169,16 @@ def blog(request):
     return render(request, 'create.html')
 
 def my_blogs(request):
-    # Check if user is logged in
+ 
     if 'username' not in request.session:
         return redirect('login')
     
     try:
-        # Get the user object from the database
+    
         user = logintable.objects.get(username=request.session['username'])
         
-        # Filter blogs by the user instance (not by username string)
         blogs = Blog.objects.filter(owner=user)
-        image = Usertable.objects.all()
+     
         
         context = {
             'blogs': blogs,
@@ -154,7 +216,7 @@ def listblog(request):
 
 
 def user_profile(request):
-    # Check session instead of using @login_required
+   
     if 'username' not in request.session:
         return redirect('login')
     
@@ -190,12 +252,11 @@ def edit_profile(request):
         profile.email = request.POST.get('email', profile.email)
         profile.contact = request.POST.get('contact', profile.contact)
 
-        # Handle password update
         new_password = request.POST.get('password')
         if new_password:
-            profile.password = new_password  # You should hash it if using for real auth
+            profile.password = new_password  
 
-        # Handle profile image update
+       
         if 'image' in request.FILES:
             profile.image = request.FILES['image']
 
