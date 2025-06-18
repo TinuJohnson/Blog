@@ -1,10 +1,13 @@
-import profile
+
 from django.shortcuts import get_object_or_404, render,redirect
-from django.contrib.auth.models import User,auth
+from django.contrib.auth.models import auth
 from django.contrib import messages
 from .models import Blog,Usertable,Comment,logintable
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
+
 
  
 def useRegistration(request):
@@ -110,10 +113,12 @@ def my_blogs(request):
         
         # Filter blogs by the user instance (not by username string)
         blogs = Blog.objects.filter(owner=user)
+        image = Usertable.objects.all()
         
         context = {
             'blogs': blogs,
-            'username': request.session['username']
+            'username': request.session['username'],
+            
         }
         return render(request, 'my_blogs.html', context)
         
@@ -288,3 +293,80 @@ def search(request):
     context={'blogs':blogs,'Query':Query}
 
     return render(request,'search.html',context)
+
+
+
+
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        
+        try:
+            user = Usertable.objects.get(username=username)
+            request.session['reset_user_id'] = user.id
+            return redirect('set_new_password')
+        except Usertable.DoesNotExist:
+            messages.error(request, 'Username does not exist')
+            return redirect('forgot_password')
+    
+    return render(request, 'forgot_password.html')
+
+def set_new_password(request):
+    if 'reset_user_id' not in request.session:
+        return redirect('login')
+    
+    user_id = request.session['reset_user_id']
+    
+    try:
+        user = Usertable.objects.get(id=user_id)
+    except Usertable.DoesNotExist:
+        messages.error(request, 'User not found')
+        return redirect('login')
+    
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Validate passwords match
+        if new_password != confirm_password:
+            messages.error(request, "Passwords don't match")
+            return redirect('set_new_password')
+        
+        try:
+            # Validate password strength
+            # Hash the new password
+            hashed_password = make_password(new_password)
+            
+            # Update Usertable
+            user.password = hashed_password
+            user.save()
+            
+            # Update logintable - find the corresponding login record
+            try:
+                login_record = logintable.objects.get(username=user.username)
+                login_record.password = new_password
+                login_record.save()
+            except logintable.DoesNotExist:
+                # If no login record exists, create one
+                logintable.objects.create(
+                    username=user.username,
+                    password=hashed_password
+                )
+            
+            # Clean up session
+            del request.session['reset_user_id']
+            
+            messages.success(request, 'Password updated successfully!')
+            return redirect('login')
+        
+        except ValidationError as e:
+            messages.error(request, '\n'.join(e.messages))
+    
+    return render(request, 'set_new_password.html')
+
+
+
+
+

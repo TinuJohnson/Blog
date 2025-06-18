@@ -15,8 +15,9 @@ urlpatterns = [
     path('edit-blog/<int:blog_id>/', views.edit_blog, name='edit_blog'),
     path('delete-blog/<int:blog_id>/', views.delete_blog, name='delete_blog'),
     path('admin',views.login, name='admin'),
-    path('search/',views.search, name='search')
-
+    path('search/',views.search, name='search'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('set-new-password/', views.set_new_password, name='set_new_password'),
 
 ]
 
