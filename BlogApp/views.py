@@ -20,11 +20,13 @@ def useRegistration(request):
             messages.error(request, 'Passwords do not match')
             return redirect('register')
         
+        user_role = request.POST.get('type', 'user')
+        
         # Create user
         userprofile = Usertable(
             username=request.POST['username'],
             password=request.POST['password'],  # Hash the password
-            role=request.POST.get('type', 'user'),  # Changed from 'role' to 'type'
+            role=request.user_role, # Changed from 'role' to 'type'
             firstname=request.POST.get('firstname'),
             lastname=request.POST.get('lastname'),
             email=request.POST['email'],
@@ -35,6 +37,7 @@ def useRegistration(request):
         loginprofile = logintable(
             username=request.POST['username'],
             password=request.POST['password'],
+            is_admin=(user_role == 'admin') 
             
         )
         
@@ -49,7 +52,7 @@ def useRegistration(request):
 
     return render(request, 'register.html')
 
-def login(request):
+def login1(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')

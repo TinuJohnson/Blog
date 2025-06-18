@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path("", views.useRegistration, name='register'),
-    path('login/', views.login, name='login'),
+    path('login/', views.login1, name='login'),
     path('logout/', views.logout, name='logout'),
     path('blog/<int:blog_id>/', views.blog_detail, name='blog_detail'),
     path('blog/<int:blog_id>/comment/', views.add_comment, name='add_comment'),
@@ -14,7 +14,7 @@ urlpatterns = [
     path('my-blogs/', views.my_blogs, name='my-blogs'),
     path('edit-blog/<int:blog_id>/', views.edit_blog, name='edit_blog'),
     path('delete-blog/<int:blog_id>/', views.delete_blog, name='delete_blog'),
-    path('admin',views.login, name='admin'),
+    
     path('search/',views.search, name='search'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('set-new-password/', views.set_new_password, name='set_new_password'),
