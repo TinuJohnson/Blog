@@ -163,23 +163,31 @@ def user_profile(request):
 
 def edit_profile(request):
     if 'username' not in request.session:
-        messages.error(request, 'Please login to comment')
+        messages.error(request, 'Please login to edit profile')
         return redirect('login')
-     
+    print("Current user in session:", request.session.get('username'))
+
+
     try:
-        profile = Usertable.objects.get(username=request.user.username)
+        username = request.session['username']
+        profile = Usertable.objects.get(username=username)
     except Usertable.DoesNotExist:
         messages.error(request, "Profile not found")
-        return redirect('home')
+        return redirect('login')
+
 
     if request.method == 'POST':
-        # Update text fields
         profile.firstname = request.POST.get('firstname', profile.firstname)
         profile.lastname = request.POST.get('lastname', profile.lastname)
         profile.email = request.POST.get('email', profile.email)
         profile.contact = request.POST.get('contact', profile.contact)
-        
-        # Handle image upload (only if new image was provided)
+
+        # Handle password update
+        new_password = request.POST.get('password')
+        if new_password:
+            profile.password = new_password  # You should hash it if using for real auth
+
+        # Handle profile image update
         if 'image' in request.FILES:
             profile.image = request.FILES['image']
 
