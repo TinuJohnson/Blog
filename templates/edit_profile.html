@@ -1,66 +1,62 @@
-
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block content %}
 
-    <div class="container">
-        <div class="edit-profile-container p-4">
-            <h2 class="profile-header">Edit Profile</h2>
-            
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <div class="mb-3">
-                    <label for="firstname" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstname" name="firstname" value="{{ profile.firstname }}">
+<div class="container mt-4">
+    <div class="card p-4 shadow-sm">
+        <h2 class="mb-4">Edit Profile</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
                 </div>
-                
-                <div class="mb-3">
-                    <label for="lastname" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" value="{{ profile.lastname }}">
-                </div>
-                
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ profile.email}}">
-                </div>
-                
-                <div class="mb-3">
-                    <label for="contact" class="form-label">Contact</label>
-                    <input type="text" class="form-control" id="contact" name="contact" value="{{ profile.contact}}">
-                </div>
-                
-                <div class="mb-3">
-                    <label for="image" class="form-label">Profile Image</label>
-                    <input class="form-control" type="file" id="image" name="image">
-                    {% if profile.image %}
-                        <div class="current-image text-muted">
-                            Current: <a href="{{ profile.image.url }}" target="_blank">{{ profile.image.name }}</a>
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">New Password (leave blank to keep current)</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                </div>
-                
-              
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <a href="{% url 'user_profile' %}" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
-        </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="firstname" class="form-label">First Name</label>
+                <input type="text" class="form-control" name="firstname" id="firstname" value="{{ profile.firstname }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="lastname" class="form-label">Last Name</label>
+                <input type="text" class="form-control" name="lastname" id="lastname" value="{{ profile.lastname }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" id="email" value="{{ profile.email }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="contact" class="form-label">Contact</label>
+                <input type="text" class="form-control" name="contact" id="contact" value="{{ profile.contact }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Profile Image</label>
+                <input type="file" class="form-control" name="image" id="image">
+                {% if profile.image %}
+                    <small class="text-muted">Current: 
+                        <a href="{{ profile.image.url }}" target="_blank">{{ profile.image.name }}</a>
+                    </small>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+                <input type="password" class="form-control" name="password" id="password">
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'user_profile' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
+</div>
 
 {% endblock %}
-   
