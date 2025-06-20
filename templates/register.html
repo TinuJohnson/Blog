@@ -19,6 +19,11 @@
             list-style: none;
             padding: 0;
         }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -28,59 +33,75 @@
             
             <!-- Messages -->
             {% if messages %}
-            <div class="alert alert-info">
-                <ul class="messages mb-0">
-                    {% for msg in messages %}
-                    <li{% if msg.tags %} class="{{ msg.tags }}"{% endif %}>{{ msg }}</li>
+            <div class="mb-4">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                        {{ message }}
+                    </div>
                     {% endfor %}
                 </ul>
             </div>
             {% endif %}
 
-            <form action="" method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
                 <div class="row g-3">
                     <!-- Username -->
                     <div class="col-md-12">
                         <label for="username" class="form-label">Username*</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               value="{{ request.POST.username }}" required>
                     </div>
                     
                     <!-- First Name -->
                     <div class="col-md-6">
                         <label for="firstname" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name">
+                        <input type="text" class="form-control" id="firstname" name="firstname" 
+                               value="{{ request.POST.firstname }}">
                     </div>
                     
                     <!-- Last Name -->
                     <div class="col-md-6">
                         <label for="lastname" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name">
+                        <input type="text" class="form-control" id="lastname" name="lastname" 
+                               value="{{ request.POST.lastname }}">
                     </div>
                     
                     <!-- Email -->
                     <div class="col-12">
                         <label for="email" class="form-label">Email*</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="{{ request.POST.email }}" required>
                     </div>
                     
                     <!-- Contact Number -->
                     <div class="col-12">
-                        <label for="contactnumber" class="form-label">Contact Number</label>
-                        <input type="number" class="form-control" id="contactnumber" name="Contact" placeholder="Enter contact number">
+                        <label for="contact" class="form-label">Contact Number</label>
+                        <input type="tel" class="form-control" id="contact" name="contact" 
+                               value="{{ request.POST.contact }}">
+                    </div>
+                    
+                    <!-- User Type (Role) -->
+                    <div class="col-12">
+                        <label for="type" class="form-label">Account Type*</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="user" {% if request.POST.type == 'user' %}selected{% endif %}>Regular User</option>
+                            <option value="admin" {% if request.POST.type == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
                     </div>
                     
                     <!-- Password -->
                     <div class="col-md-6">
                         <label for="password" class="form-label">Password*</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                        <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     
                     <!-- Confirm Password -->
                     <div class="col-md-6">
                         <label for="password1" class="form-label">Confirm Password*</label>
-                        <input type="password" class="form-control" id="password1" name="password1" placeholder="Confirm password" required>
+                        <input type="password" class="form-control" id="password1" name="password1" required>
                     </div>
                     
                     <!-- Profile Picture -->
@@ -97,7 +118,7 @@
             </form>
             
             <div class="text-center mt-3">
-                <p>Already have an account? <a href="{% url 'login'  %}" class="btn btn-primary">Login here</a></p>
+                <p>Already have an account? <a href="{% url 'login' %}" class="text-primary">Login here</a></p>
             </div>
         </div>
     </div>

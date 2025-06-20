@@ -1,5 +1,5 @@
 
-{% extends "home.html" %} 
+{% extends "base.html" %} 
 {% block content %}
 
     <div class="container">
@@ -30,12 +30,12 @@
                 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ profile.email }}">
+                    <input type="email" class="form-control" id="email" name="email" value="{{ profile.email}}">
                 </div>
                 
                 <div class="mb-3">
                     <label for="contact" class="form-label">Contact</label>
-                    <input type="text" class="form-control" id="contact" name="contact" value="{{ profile.contact|default:'' }}">
+                    <input type="text" class="form-control" id="contact" name="contact" value="{{ profile.contact}}">
                 </div>
                 
                 <div class="mb-3">
@@ -53,11 +53,7 @@
                     <input type="password" class="form-control" id="password" name="password">
                 </div>
                 
-                <div class="mb-3">
-                    <label for="password1" class="form-label">Confirm New Password</label>
-                    <input type="password" class="form-control" id="password1" name="password1">
-                </div>
-                
+              
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                     <a href="{% url 'user_profile' %}" class="btn btn-secondary">Cancel</a>
@@ -66,5 +62,5 @@
         </div>
     </div>
 
-    {% endblock %}
+{% endblock %}
    
