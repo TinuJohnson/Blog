@@ -243,7 +243,8 @@ def add_comment(request, blog_id):
 
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
-    return render(request, 'blog_detail.html', {'blog': blog})
+    return render(request, 'blog_detail.html', {'blog': blog, 'username': request.session.get('username')})
+
 
 
 def edit_blog(request, blog_id):
@@ -288,3 +289,45 @@ def search(request):
     context={'blogs':blogs,'Query':Query}
 
     return render(request,'search.html',context)
+
+def edit_comment(request, comment_id):
+    if 'username' not in request.session:
+        return redirect('login')
+
+    comment = get_object_or_404(Comment, id=comment_id)
+    username = request.session['username']
+
+    if comment.user.username != username:
+        messages.error(request, "You can only edit your own comments.")
+        return redirect('blog_detail', blog_id=comment.blog.id)
+
+    if request.method == 'POST':
+        new_text = request.POST.get('comment_text', '').strip()
+        if new_text:
+            comment.text = new_text
+            comment.save()
+            messages.success(request, "Comment updated successfully.")
+        else:
+            messages.error(request, "Comment cannot be empty.")
+        return redirect('blog_detail', blog_id=comment.blog.id)
+
+    return render(request, 'edit_comment.html', {'comment': comment})
+
+def delete_comment(request, comment_id):
+    if 'username' not in request.session:
+        return redirect('login')
+
+    comment = get_object_or_404(Comment, id=comment_id)
+    username = request.session['username']
+
+    if comment.user.username != username:
+        messages.error(request, "You can only delete your own comments.")
+        return redirect('blog_detail', blog_id=comment.blog.id)
+
+    if request.method == 'POST':
+        blog_id = comment.blog.id
+        comment.delete()
+        messages.success(request, "Comment deleted successfully.")
+        return redirect('blog_detail', blog_id=blog_id)
+
+    return render(request, 'confirm_delete_comment.html', {'comment': comment})

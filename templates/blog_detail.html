@@ -43,14 +43,25 @@
             {% if blog.comment_set.all %}
                 {# Default for ForeignKey relation #}
                 {% for comment in blog.comment_set.all %}
-                  <div class="comment mb-3 p-3 border rounded">
-                    <div class="d-flex justify-content-between mb-2">
-                      <strong class="comment-author">{{ comment.user.username|default:'Anonymous' }}</strong>
-                      <small class="text-muted comment-time">{{ comment.created_at|timesince }} ago</small>
-                    </div>
-                    <p class="mb-0">{{ comment.text|linebreaks }}</p>
-                  </div>
-                {% endfor %}
+                    <div class="comment mb-3 p-3 border rounded">
+                   <div class="d-flex justify-content-between mb-2">
+                      <strong>{{ comment.user.username|default:'Anonymous' }}</strong>
+                      <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                     </div>
+                     <p class="mb-2">{{ comment.text|linebreaks }}</p>
+
+                      {% if comment.user.username == request.session.username %}
+                   <div>
+                  <a href="{% url 'edit_comment' comment.id %}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                  <form method="post" action="{% url 'delete_comment' comment.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+{% endfor %}
+
               {% else %}
                 <p class="text-muted">No comments yet.</p>
               {% endif %}
