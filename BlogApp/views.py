@@ -1,10 +1,13 @@
-import profile
+
 from django.shortcuts import get_object_or_404, render,redirect
-from django.contrib.auth.models import User,auth
+from django.contrib.auth.models import auth
 from django.contrib import messages
 from .models import Blog,Usertable,Comment,logintable
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
+
 
  
 def useRegistration(request):
@@ -17,11 +20,13 @@ def useRegistration(request):
             messages.error(request, 'Passwords do not match')
             return redirect('register')
         
+        user_role = request.POST.get('type', 'user')
+        
         # Create user
         userprofile = Usertable(
             username=request.POST['username'],
             password=request.POST['password'],  # Hash the password
-            role=request.POST.get('type', 'user'),  # Changed from 'role' to 'type'
+            role=request.user_role, # Changed from 'role' to 'type'
             firstname=request.POST.get('firstname'),
             lastname=request.POST.get('lastname'),
             email=request.POST['email'],
@@ -32,6 +37,7 @@ def useRegistration(request):
         loginprofile = logintable(
             username=request.POST['username'],
             password=request.POST['password'],
+            is_admin=(user_role == 'admin') 
             
         )
         
@@ -46,7 +52,7 @@ def useRegistration(request):
 
     return render(request, 'register.html')
 
-def login(request):
+def login1(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -110,10 +116,12 @@ def my_blogs(request):
         
         # Filter blogs by the user instance (not by username string)
         blogs = Blog.objects.filter(owner=user)
+        image = Usertable.objects.all()
         
         context = {
             'blogs': blogs,
-            'username': request.session['username']
+            'username': request.session['username'],
+            
         }
         return render(request, 'my_blogs.html', context)
         
